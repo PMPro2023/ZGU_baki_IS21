@@ -1,0 +1,71 @@
+WHERE(SELECT salary FROM specialties WHERE specialty_id = doctors.specialty_id) > 30000;
+WHERE(SELECT salary FROM specialties WHERE specialty_id = doctors.specialty_id) = 30000;
+WHERE(SELECT salary FROM specialties WHERE specialty_id = doctors.specialty_id) BETWEEN 30000 AND 40000;
+
+SELECT * FROM medical_records WHERE report LIKE ‘A%’;
+SELECT * FROM medical_records WHERE report LIKE ‘%F%’;
+SELECT id, payment, offices_num FROM record WHERE offices_num IN (101, 102);
+
+SELECT drug_name, quantity, price, quantity * price AS Summa from medicines;
+
+SELECT record.id, patients.full_name, doctors.full_name, record_payment, record.offices_num;
+FROM record, patients, doctors;
+WHERE record.patient_id = patients.patient_id AND record.doctor_id = doctors.doctor_id;
+
+SELECT SUM(payment) AS payment_id_1 FROM record WHERE patient_id = 1;
+
+SELECT patient_id, COUNT (patient_id) FROM record GROUP BY(patient_id);
+
+SELECT doctors.doctor_id, doctors.full_name, specialties.name, specialties.salary FROM doctors, specialties;
+WHERE doctors.specialty_id = specialties.specialty_id ORDER BY (specialties.salary);
+
+SELECT doctors.doctor_id, doctors.full_name, specialties.name, specialties.salary FROM doctors, specialties
+WHERE doctors.specialty_id = (SELECT specialty_id FROM specialties WHERE name = ‘A’)
+AND specialties.salary = (SELECT salary FROM specialties WHERE name =  ‘A’);
+
+SELECT * FROM specialties WHERE specialties.specialty_id 
+IN(SELECT specialties.specialty_id FROM specialties WHERE specialties.salary > 35000);
+
+SELECT * FROM specialties
+WHERE EXISTS(SELECT * FROM offices WHERE offices.day_of_the_week_id = schedule.day_of_the_week_id);
+
+SELECT full_name, gender FROM doctors
+UNION
+SELECT full_name, gender FROM patients;
+
+SELECT staff_name FROM staff
+INTERSECT
+SELECT full_name FROM doctors;
+
+SELECT staff_name FROM staff
+EXCEPT
+SELECT full_name FROM doctors;
+
+SELECT name, salary,
+CASE WHEN salary <= 35000 THEN ‘Бонусы и премии’
+ELSE ‘Только премии’ END AS financian_support FROM specialties;
+
+SELECT doctors.full_name, doctors.gender, specialties.name, specialties.salary FROM doctors
+INNER JOIN specialties ON doctors.specialty_id = specialty_id;
+
+SELECT staff1.staff_name, staff2.job FROM staff staff1
+INNER JOIN staff staff2 ON staff2.job AND staff1.staff_name = staff2.staff_name ORDER BY job;
+
+SELECT doctors.full_name, staff.staff_name FROM doctors CROSS JOIN staff;
+
+SELECT doctors.full_name, staff.job FROM doctors
+LEFT JOIN staff ON doctors.full_name = staff.staff_name;
+
+SELECT doctors.full_name, staff.job FROM doctors
+RIGHT JOIN staff ON doctors.full_name = staff.staff_name;
+
+WITH RECURSIVE staff_query AS
+(
+	SELECT staff_id, staff_name, job, boss_id FROM staff s
+	WHERE boss_id is null
+	UNION ALL
+	SELECT s.staff_id, s.staff_name, s.job, s.boss_id FROM staff s
+	INNER JOIN staff_query ss ON ss.staff_id = s.boss_id
+)
+
+
