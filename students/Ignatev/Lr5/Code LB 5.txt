@@ -1,0 +1,35 @@
+CREATE VIEW StaffQuery AS
+	WITH RECURSIVE staff_query AS
+	(SELECT staff_if,staff_name,job,boss_id FROM staff s
+	 WHERE boss_id IS NULL
+	 UNION ALL
+	 SELECT s.staff_id, s.staff_name,s.job,s.boss_id FROM staff s
+	 INNER JOIN staff_query ss ON ss.staff_id = s.boss_id);
+
+CREATE MATERIALIZED VIEW drugs_price AS SELECT * FROM medicines;
+
+CREATE OR REPLACE VIEW doctors_salary AS SELECT doctors.doctor_id, doctors.full_name, specialties.name, specialties.salary 
+FROM doctors, specialties WHERE doctors.specialty_id = specialties.specialty_id ORDER BY (specialties.salary);
+
+CREATE TEMPORARY VIEW tempd AS SELECT name, salary,
+CASE WHEN salary <= 35000 THEN ‘Бонусы и премии’
+ELSE ‘Только премии’ END AS financian_support FROM specialties;
+
+UPDATE doc SET full_name  = ‘name’ WHERE doctor_id = 6;
+INSERT INTO doc VALUES(7, 5, ‘name’, ‘gender’, number, email);
+DELETE FROM offices WHERE doctor_id = 5; DELETE FROM doc WHERE doctor_id = 5;  
+
+REFRESH MATERIALIZED VIEW drugs_price;
+
+CREATE INDEX drug_i ON medicines (drug_name);
+
+CREATE INDEX specialty_salary ON specialties (name, salary);
+
+CREATE UNIQUE INDEX drug_unique ON drugs_price(drug_name);
+
+CREATE INDEX staff_i ON staff(staff_id desc);
+
+ALTER VIEW doc RENAME TO docta;
+
+DROP INDEX staff_i;
+DROP VIEW StaffQuery;
