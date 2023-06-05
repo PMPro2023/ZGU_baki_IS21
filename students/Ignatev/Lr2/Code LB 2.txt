@@ -1,0 +1,22 @@
+ALTER TABLE patients ADD UNIQUE(full_name);
+ALTER TABLE doctors ADD UNIQUE(full_name);
+ALTER TABLE specialties ADD UNIQUE(name,description);
+
+ALTER TABLE specialties ALTER COLUMN salary SET DEFAULT(30000);
+ALTER TABLE schedule ALTER COLUMN working_time SET DEFAULT(‘9:00:00’);
+ALTER TABLE schedule ALTER COLUMN lunch_break SET DEFAULT(’13:00:00’);
+ALTER TABLE record ALTER COLUMN payment SET DEFAULT(0);
+ALTER TABLE offices ALTER COLUMN break_time SET DEFAULT(’13:00:00’);
+ALTER TABLE medical_records ALTER COLUMN payment SET DEFAULT(0);
+
+ALTER TABLE specialties ADD CHECK(salary >= 30000);
+ALTER TABLE record ADD CHECK(payment >= 0);
+
+CREATE TABLE morgue (patient_id integer NOT NULL, date_death date NOT NULL, cause text);
+ALTER TABLE morgue ADD FOREIGN KEY (patient_id) REFERENCES patients (patient_id);
+
+ALTER TABLE morgue ADD COLUMN body_condition character varying(30) NOT NULL;
+
+ALTER TABLE morgue DROP COLUMN date_death;
+
+DROP TABLE doctors, medical_records, morgue, offices, patients, record, schedule, specialties;
